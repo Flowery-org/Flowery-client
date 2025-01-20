@@ -1,11 +1,12 @@
 import { LucideIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type AppBarProps = {
   title?: string;
   titleStyle?: 'iconText' | 'logoIcon';
-  leftIcon?: { icon: LucideIcon; onClick: () => void };
-  rightIcon?: { icon: LucideIcon; onClick: () => void };
+  leftIcon?: { icon: LucideIcon; href: string };
+  rightIcon?: { icon: LucideIcon; href: string };
 };
 
 export function AppBar({
@@ -14,10 +15,16 @@ export function AppBar({
   leftIcon,
   rightIcon,
 }: AppBarProps) {
+  const LeftIcon = leftIcon?.icon;
+  const RightIcon = rightIcon?.icon;
   return (
     <div className='py-3 px-8 flex items-center h-14 w-full'>
       <div className='w-2/12 items-center flex justify-start'>
-        {leftIcon && <leftIcon.icon onClick={leftIcon.onClick} />}
+        {LeftIcon && (
+          <Link href={leftIcon.href}>
+            <LeftIcon />
+          </Link>
+        )}
       </div>
 
       <div className='w-8/12 items-center flex'>
@@ -41,7 +48,11 @@ export function AppBar({
       </div>
 
       <div className='w-2/12 items-center flex justify-end'>
-        {rightIcon && <rightIcon.icon onClick={rightIcon.onClick} />}
+        {RightIcon && (
+          <Link href={rightIcon.href}>
+            <RightIcon />
+          </Link>
+        )}
       </div>
     </div>
   );
