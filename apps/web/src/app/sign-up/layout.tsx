@@ -1,8 +1,10 @@
 import { AppBar } from '@/components/common/app-bar';
-import { ReactNode } from 'react';
 import Image from 'next/image';
+import { PropsWithChildren } from 'react';
 
-export default function Layout({ children }: { children: ReactNode }) {
+type Props = PropsWithChildren
+
+export default function Layout({ children }: Props) {
   return (
     <div className='h-screen'>
       <AppBar title='회원가입' />

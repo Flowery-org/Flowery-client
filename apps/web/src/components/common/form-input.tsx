@@ -1,5 +1,6 @@
 'use client';
 
+import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
   FormField,
@@ -8,15 +9,13 @@ import {
   FormMessage,
 } from '@packages/ui/components/form';
 import { Input } from '@packages/ui/components/input';
-import { cn } from '@packages/ui/lib/utils';
 import { LucideIcon } from 'lucide-react';
 import { InputHTMLAttributes } from 'react';
-import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { FieldValues, Path } from 'react-hook-form';
 
 
 type FormInputProps<T extends FieldValues> = {
   icon: LucideIcon;
-  form: UseFormReturn<T>;
   name: Path<T>;
   label?: string;
   description?: string;
@@ -25,14 +24,15 @@ type FormInputProps<T extends FieldValues> = {
 
 export function FormInput<T extends FieldValues>({
   icon,
-  form,
   name,
   label,
   validMessage,
   className,
   ...props
 }: FormInputProps<T>) {
-  const isFieldValid = form.getFieldState(name).isDirty && !form.getFieldState(name).error;
+  const form = useFormContext<T>();
+  const { dirtyFields, errors } = form.formState;
+  const isFieldValid = dirtyFields[name as keyof typeof dirtyFields] && !errors[name];
 
   return (
     <FormField
@@ -45,12 +45,14 @@ export function FormInput<T extends FieldValues>({
             <Input icon={icon} className={className} {...field} {...props} />
           </FormControl>
           <div className='min-h-[20px]'>
-            <FormMessage className={cn(
-              isFieldValid && "text-accent", // 성공시 accent 컬러
-              !isFieldValid && "text-destructive" // 실패시 destructive 컬러
-            )}>
-              {isFieldValid ? validMessage : undefined}
-            </FormMessage>
+            {isFieldValid && (
+              <FormMessage className="text-accent">
+                {validMessage}
+                </FormMessage>
+            )}
+            {!isFieldValid && (
+              <FormMessage className="text-destructive" />
+            )}
           </div>
         </FormItem>
       )}

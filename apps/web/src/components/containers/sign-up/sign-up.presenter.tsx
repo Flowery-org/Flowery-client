@@ -10,23 +10,17 @@ import {
   LockKeyholeOpen,
   LockKeyhole,
   Mail, } from 'lucide-react';
-import { UseFormReturn } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import Link from 'next/link';
 
 interface SignUpPresenterProps {
-  form: UseFormReturn<{
-    username: string;
-    id: string;
-    nickname: string;
-    password: string;
-    confirmPassword: string;
-    email: string;
-  }>;
   onSubmit: () => void;
   isValid: boolean;
 }
 
-export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPresenterProps) {
+export default function SignUpPresenter({ onSubmit, isValid }: SignUpPresenterProps) {
+  const form = useFormContext();
+
   return (
     <div className='flex items-center justify-center min-h-screen w-full'>
       <main className='flex flex-col gap-8 w-96'>
@@ -34,7 +28,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormInput
               icon={UserRound}
-              form={form}
               name='username'
               placeholder='이름을 입력해 주세요'
               label='이름'
@@ -43,7 +36,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
             />
             <FormInput
               icon={UserRoundPen}
-              form={form}
               name='id'
               placeholder='4-12자로 입력해 주세요'
               label='아이디'
@@ -52,7 +44,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
             />
             <FormInput
               icon={PencilLine}
-              form={form}
               name='nickname'
               placeholder='12자 이내로 입력해 주세요'
               label='닉네임'
@@ -61,7 +52,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
             />
             <FormInput
               icon={LockKeyholeOpen}
-              form={form}
               name='password'
               type="password"
               placeholder='8자 이상의 문자열로 입력해 주세요'
@@ -71,7 +61,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
             />
             <FormInput
               icon={LockKeyhole}
-              form={form}
               name='confirmPassword'
               type="password"
               placeholder='비밀번호를 다시 입력해 주세요'
@@ -81,7 +70,6 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
             />
             <FormInput
               icon={Mail}
-              form={form}
               name='email'
               type="email"
               placeholder='이메일을 입력해 주세요'
@@ -99,8 +87,7 @@ export default function SignUpPresenter({ form, onSubmit, isValid }: SignUpPrese
               <Link href="/sign-in" className="text-accent underline">
               로그인
               </Link>
-            </div>
-            
+            </div> 
           </form>
         </Form>
       </main>
