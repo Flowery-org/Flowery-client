@@ -1,6 +1,5 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
 import {
   FormControl,
   FormField,
@@ -11,8 +10,7 @@ import {
 import { Input } from '@packages/ui/components/input';
 import { LucideIcon } from 'lucide-react';
 import { InputHTMLAttributes } from 'react';
-import { FieldValues, Path } from 'react-hook-form';
-
+import { FieldValues, Path, useFormContext } from 'react-hook-form';
 
 type FormInputProps<T extends FieldValues> = {
   icon: LucideIcon;
@@ -33,7 +31,10 @@ export function FormInput<T extends FieldValues>({
   const { formState, control, watch } = useFormContext<T>();
   const { errors, touchedFields } = formState;
   const value = watch(name);
-  const isFieldValid = touchedFields[name as keyof typeof touchedFields] && Boolean(value) && !errors[name];
+  const isFieldValid =
+    touchedFields[name as keyof typeof touchedFields] &&
+    Boolean(value) &&
+    !errors[name];
 
   return (
     <FormField
@@ -46,10 +47,11 @@ export function FormInput<T extends FieldValues>({
             <Input icon={icon} className={className} {...field} {...props} />
           </FormControl>
           <div className='min-h-[20px]'>
-            {isFieldValid ? 
-              <FormMessage className="text-accent">{validMessage}</FormMessage> : 
-              <FormMessage className="text-destructive" />
-            }
+            {isFieldValid ? (
+              <FormMessage className='text-accent'>{validMessage}</FormMessage>
+            ) : (
+              <FormMessage className='text-destructive' />
+            )}
           </div>
         </FormItem>
       )}
