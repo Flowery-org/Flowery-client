@@ -1,7 +1,7 @@
 'use client'
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { formSchema } from './schema';
+import { signUpformSchema } from './schema';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,8 +10,8 @@ import SignUpPresenter from './sign-up.presenter';
 export default function SignUpContainer() {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signUpformSchema>>({
+    resolver: zodResolver(signUpformSchema),
     defaultValues: {
       username: '',
       id: '',
@@ -23,15 +23,11 @@ export default function SignUpContainer() {
     mode: 'onChange'
   });
 
-  const {formState} = form;
+  const { formState, handleSubmit } = form;
 
-  const isValid = Boolean(
-    // 에러 없는지 확인
-    Object.keys(formState.errors).length === 0 &&
-    formState.isValid
-  );
+  const isValid = Boolean(formState.isValid);
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = handleSubmit((data) => {
     console.log(data);
     router.push('/sign-in');
   });

@@ -78,7 +78,7 @@ export default function SignUpPresenter({ onSubmit, isValid }: SignUpPresenterPr
               validMessage="사용 가능한 이메일입니다."
             />
 
-            <Button type='submit' disabled={!isValid} className="w-full ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}">
+            <Button type='submit' disabled={!isValid} className="w-full">
               회원가입
             </Button>
 

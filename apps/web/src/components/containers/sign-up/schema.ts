@@ -1,5 +1,32 @@
 import { z } from 'zod';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export const validateId = async (_id: string) => {
+  try {
+    // 서버 연동 후 실제 API 호출
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const validateNickname = async (_nickname: string) => {
+  try {
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const validateEmail = async (_email: string) => {
+  try {
+    return true;
+  } catch {
+    return false;
+  }
+};
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 const VALIDATION = {
   USERNAME: {
     MIN: 1,
@@ -52,7 +79,7 @@ const VALIDATION = {
   }
  } as const;
  
- export const formSchema = z.object({
+ export const signUpformSchema = z.object({
   username: z
     .string()
     .min(VALIDATION.USERNAME.MIN, { message: VALIDATION.USERNAME.MESSAGES.MIN })
@@ -63,13 +90,13 @@ const VALIDATION = {
     .min(VALIDATION.ID.MIN, { message: VALIDATION.ID.MESSAGES.LENGTH })
     .max(VALIDATION.ID.MAX, { message: VALIDATION.ID.MESSAGES.LENGTH })
     .regex(VALIDATION.ID.REGEX, { message: VALIDATION.ID.MESSAGES.REGEX })
-    .refine(async () => true, { message: VALIDATION.ID.MESSAGES.DUPLICATE }),
+    .refine(validateId, { message: VALIDATION.ID.MESSAGES.DUPLICATE }),
  
   nickname: z
     .string()
     .max(VALIDATION.NICKNAME.MAX, { message: VALIDATION.NICKNAME.MESSAGES.MAX })
     .regex(VALIDATION.NICKNAME.REGEX, { message: VALIDATION.NICKNAME.MESSAGES.REGEX })
-    .refine(async () => true, { message: VALIDATION.NICKNAME.MESSAGES.DUPLICATE }),
+    .refine(validateNickname, { message: VALIDATION.NICKNAME.MESSAGES.DUPLICATE }),
   
   password: z
     .string()
@@ -96,7 +123,7 @@ const VALIDATION = {
     .string()
     .max(VALIDATION.EMAIL.MAX, { message: VALIDATION.EMAIL.MESSAGES.MAX })
     .email({ message: VALIDATION.EMAIL.MESSAGES.FORMAT })
-    .refine(async () => true, { message: VALIDATION.EMAIL.MESSAGES.DUPLICATE })
+    .refine(validateEmail, { message: VALIDATION.EMAIL.MESSAGES.DUPLICATE }),
  }).refine((data) => data.password === data.confirmPassword, {
   message: VALIDATION.PASSWORD.MESSAGES.CONFIRM,
   path: ["confirmPassword"],
