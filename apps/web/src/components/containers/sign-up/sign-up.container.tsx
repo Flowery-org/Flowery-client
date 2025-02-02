@@ -27,14 +27,13 @@ export default function SignUpContainer() {
 
   const isValid = Boolean(formState.isValid);
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = handleSubmit(() => {
     router.push('/sign-in');
   });
 
   return (
     <FormProvider {...form}>
-      <SignUpPresenter onSubmit={onSubmit} isValid={isValid} />;
+      <SignUpPresenter onSubmit={onSubmit} isValid={isValid} />
     </FormProvider>
   );
 }

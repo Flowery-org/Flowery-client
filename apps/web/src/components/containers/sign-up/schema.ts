@@ -82,11 +82,12 @@ const VALIDATION = {
  export const signUpformSchema = z.object({
   username: z
     .string()
-    .min(VALIDATION.USERNAME.MIN, { message: VALIDATION.USERNAME.MESSAGES.MIN })
+    .min(1, { message: VALIDATION.USERNAME.MESSAGES.MIN })
     .max(VALIDATION.USERNAME.MAX, { message: VALIDATION.USERNAME.MESSAGES.MAX }),
     
   id: z
     .string()
+    .min(1)
     .min(VALIDATION.ID.MIN, { message: VALIDATION.ID.MESSAGES.LENGTH })
     .max(VALIDATION.ID.MAX, { message: VALIDATION.ID.MESSAGES.LENGTH })
     .regex(VALIDATION.ID.REGEX, { message: VALIDATION.ID.MESSAGES.REGEX })
@@ -94,12 +95,14 @@ const VALIDATION = {
  
   nickname: z
     .string()
+    .min(1)
     .max(VALIDATION.NICKNAME.MAX, { message: VALIDATION.NICKNAME.MESSAGES.MAX })
     .regex(VALIDATION.NICKNAME.REGEX, { message: VALIDATION.NICKNAME.MESSAGES.REGEX })
     .refine(validateNickname, { message: VALIDATION.NICKNAME.MESSAGES.DUPLICATE }),
   
   password: z
     .string()
+    .min(1)
     .min(VALIDATION.PASSWORD.MIN, { message: VALIDATION.PASSWORD.MESSAGES.MIN })
     .refine(
       (password) => {
@@ -121,6 +124,7 @@ const VALIDATION = {
  
   email: z
     .string()
+    .min(1)
     .max(VALIDATION.EMAIL.MAX, { message: VALIDATION.EMAIL.MESSAGES.MAX })
     .email({ message: VALIDATION.EMAIL.MESSAGES.FORMAT })
     .refine(validateEmail, { message: VALIDATION.EMAIL.MESSAGES.DUPLICATE }),
