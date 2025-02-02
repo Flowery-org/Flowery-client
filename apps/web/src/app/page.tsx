@@ -37,7 +37,6 @@ export default function Home() {
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormInput
               icon={UserRoundPen}
-              form={form}
               name='username'
               placeholder='4-12자로 입력해주세요'
               label='아이디'
