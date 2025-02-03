@@ -25,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang='ko' suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex justify-center bg-white`}
       >
-        <Providers>{children}</Providers>
+        <div className='w-[400px] bg-background'>
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );
