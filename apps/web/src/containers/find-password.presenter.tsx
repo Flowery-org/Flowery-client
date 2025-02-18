@@ -13,6 +13,7 @@ interface FindPasswordPresenterProps {
   verificationError: string | null;
   submitError: string | null;
   onSendCode: () => Promise<boolean>;
+  isCodeFromFilled: boolean;
 }
 export default function FindPasswordPresenter({
   onSubmit,
@@ -20,6 +21,7 @@ export default function FindPasswordPresenter({
   verificationError,
   submitError,
   onSendCode,
+  isCodeFromFilled,
 }: FindPasswordPresenterProps) {
   const form = useFormContext();
   const [isSent, setIsSent] = useState(false);
@@ -48,11 +50,8 @@ export default function FindPasswordPresenter({
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
 
-  const nameValue = form.watch('username');
-  const idValue = form.watch('id');
-  const emailValue = form.watch('email');
   const emailError = form.formState.errors.email;
-  const isEmailValid = emailValue && !emailError && nameValue && idValue;
+  const isEmailValid = isCodeFromFilled && !emailError;
 
   const handleSendCode = async () => {
     const success = await onSendCode();

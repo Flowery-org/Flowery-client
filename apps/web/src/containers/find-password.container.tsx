@@ -47,6 +47,8 @@ export default function FindPasswordContainer() {
       !formState.errors.username &&
       !formState.errors.email,
   );
+
+  const isCodeFromFilled = Boolean(usernameValue && idValue && emailValue);
   // 서버 연결
   // const sendVerificationCode = async (data: {
   //   username: string;
@@ -155,6 +157,7 @@ export default function FindPasswordContainer() {
           verificationError={verificationError}
           submitError={submitError}
           onSendCode={onSendCode}
+          isCodeFromFilled={isCodeFromFilled}
         />
       </FormProvider>
       <Modal

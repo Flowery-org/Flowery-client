@@ -71,9 +71,9 @@ export function SigninPresenter({
                 placeholder='비밀번호를 입력해주세요'
               />
               <div className='items-center justify-center flex mb-4 text-sm text-gray-600'>
-                <Link href='/find-id'>아이디 찾기</Link>
+                <Link href='/find/id'>아이디 찾기</Link>
                 &nbsp;<span>|</span>&nbsp;
-                <Link href='/find-pw'>비밀번호 찾기</Link>
+                <Link href='/find/password'>비밀번호 찾기</Link>
               </div>
 
               <div className='text-sm h-1 mx-1 my-8 text-destructive'>

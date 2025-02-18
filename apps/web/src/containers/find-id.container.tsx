@@ -44,6 +44,7 @@ export default function FindIdContainer() {
       !formState.errors.username &&
       !formState.errors.email,
   );
+  const isCodeFormFilled = Boolean(usernameValue && emailValue);
 
   // 서버 연결
   // const sendVerificationCode = async (data: {
@@ -153,6 +154,7 @@ export default function FindIdContainer() {
           verificationError={verificationError}
           submitError={submitError}
           onSendCode={onSendCode}
+          isCodeFromFilled={isCodeFormFilled}
         />
       </FormProvider>
       <Modal

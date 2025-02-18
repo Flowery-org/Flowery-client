@@ -13,6 +13,7 @@ interface FindIdPresenterProps {
   verificationError: string | null;
   submitError: string | null;
   onSendCode: () => Promise<boolean>;
+  isCodeFromFilled: boolean;
 }
 export default function FindIdPresenter({
   onSubmit,
@@ -20,6 +21,7 @@ export default function FindIdPresenter({
   verificationError,
   submitError,
   onSendCode,
+  isCodeFromFilled,
 }: FindIdPresenterProps) {
   const form = useFormContext();
   const [isSent, setIsSent] = useState(false);
@@ -48,10 +50,8 @@ export default function FindIdPresenter({
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
 
-  const nameValue = form.watch('username');
-  const emailValue = form.watch('email');
   const emailError = form.formState.errors.email;
-  const isEmailValid = emailValue && !emailError && nameValue;
+  const isEmailValid = isCodeFromFilled && !emailError;
 
   const handleSendCode = async () => {
     const success = await onSendCode();
@@ -60,6 +60,7 @@ export default function FindIdPresenter({
       setRemainingTime(120);
     }
   };
+
   return (
     <div className='flex  justify-center min-h-screen w-full'>
       <main className='flex flex-col gap-8 w-96 mt-20'>
