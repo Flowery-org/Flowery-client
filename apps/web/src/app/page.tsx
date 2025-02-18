@@ -1,51 +1,105 @@
 'use client';
-import { FormInput } from '@/components/common/form-input';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import { useState } from 'react';
 import { Button } from '@packages/ui/components/button';
-import { Form } from '@packages/ui/components/form';
-import { UserRoundPen } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-export default function Home() {
-  const formSchema = z.object({
-    username: z
-      .string()
-      .min(2, {
-        message: '아이디는 4-12자로 입력해주세요.',
-      })
-      .max(12, {
-        message: '아이디는 4-12자로 입력해주세요.',
-      }),
-  });
+import { Bell } from 'lucide-react';
+import Modal from '../components/common/Modal';
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: '',
-    },
-  });
-
-  function onSubmit() {
-    console.log(form.getValues());
-  }
+export default function ModalTest() {
+  const [messageModal, setMessageModal] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [inputModal, setInputModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   return (
-    <div className='flex items-center justify-center min-h-screen w-full'>
-      <main className='flex flex-col gap-8 w-96'>
-        <div className='text-4xl font-bold'>Components</div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            <FormInput
-              icon={UserRoundPen}
-              name='username'
-              placeholder='4-12자로 입력해주세요'
-              label='아이디'
-              description='아이디를 입력하세요.'
-            />
-            <Button type='submit'>테스트</Button>
-          </form>
-        </Form>
-      </main>
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
+      <h1 className="text-2xl font-bold mb-8">모달 테스트</h1>
+      
+      {/* 메시지 모달 */}
+      <Button 
+        onClick={() => setMessageModal(true)}
+        variant="outline"
+        className="w-[200px]"
+      >
+        메시지 모달
+      </Button>
+      <Modal
+        open={messageModal}
+        onClose={() => setMessageModal(false)}
+        variant="message"
+        description="이메일 주소가 비밀번호는 'abcqwerf!' 입니다."
+      />
+
+      {/* 확인 모달 */}
+      <Button 
+        onClick={() => setConfirmModal(true)}
+        variant="outline"
+        className="w-[200px]"
+      >
+        확인 모달
+      </Button>
+      <Modal
+        open={confirmModal}
+        onClose={() => setConfirmModal(false)}
+        variant="confirm"
+        description="친구 추가 하시겠습니까?"
+        onSubmit={() => {
+          console.log('확인');
+          setConfirmModal(false);
+        }}
+        onCancel={() => {
+          console.log('취소');
+          setConfirmModal(false);
+        }}
+      />
+
+      {/* 입력 모달 */}
+      <Button 
+        onClick={() => setInputModal(true)}
+        variant="outline"
+        className="w-[200px]"
+      >
+        입력 모달
+      </Button>
+      <Modal
+        open={inputModal}
+        onClose={() => setInputModal(false)}
+        variant="input"
+        title="알림 추가하기"
+        icon={<Bell className="w-5 h-5" />}
+        description="상세 내용을 입력해주세요"
+        onSubmit={(value) => {
+          console.log('입력값:', value);
+          setInputModal(false);
+        }}
+      />
+
+      {/* 프로필 모달 */}
+      <Button 
+        onClick={() => setProfileModal(true)}
+        variant="outline"
+        className="w-[200px]"
+      >
+        프로필 모달
+      </Button>
+      <Modal
+        open={profileModal}
+        onClose={() => setProfileModal(false)}
+        variant="profile"
+      >
+        <div className="flex justify-between items-center py-2 border-b border-border/30">
+          <span className="text-muted-foreground">아이디</span>
+          <span className="text-foreground">plant123</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-border/30">
+          <span className="text-muted-foreground">지금까지 키운 꽃 개수</span>
+          <span className="text-foreground">5</span>
+        </div>
+        <div className="flex justify-between items-center py-2">
+          <span className="text-muted-foreground">오늘 첫 성장</span>
+          <span className="text-foreground">완료</span>
+        </div>
+      </Modal>
+    </main>
   );
 }
