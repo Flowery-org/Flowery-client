@@ -10,10 +10,16 @@ import { useFormContext } from 'react-hook-form';
 interface FindPasswordPresenterProps {
   onSubmit: () => void;
   isValid: boolean;
+  verificationError: string | null;
+  submitError: string | null;
+  onSendCode: () => Promise<boolean>;
 }
 export default function FindPasswordPresenter({
   onSubmit,
   isValid,
+  verificationError,
+  submitError,
+  onSendCode,
 }: FindPasswordPresenterProps) {
   const form = useFormContext();
   const [isSent, setIsSent] = useState(false);
@@ -39,18 +45,22 @@ export default function FindPasswordPresenter({
     };
   }, [isSent]);
 
-  function onSendCode() {
-    setIsSent(true);
-    setRemainingTime(120);
-    // TODO: 코드 전송 로직 추가
-  }
-
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
 
+  const nameValue = form.watch('username');
+  const idValue = form.watch('id');
   const emailValue = form.watch('email');
   const emailError = form.formState.errors.email;
-  const isEmailValid = emailValue && !emailError;
+  const isEmailValid = emailValue && !emailError && nameValue && idValue;
+
+  const handleSendCode = async () => {
+    const success = await onSendCode();
+    if (success) {
+      setIsSent(true);
+      setRemainingTime(120);
+    }
+  };
   return (
     <div className='flex  justify-center min-h-screen w-full'>
       <main className='flex flex-col gap-8 w-96 mt-20'>
@@ -62,6 +72,7 @@ export default function FindPasswordPresenter({
               placeholder='이름을 입력해 주세요'
               label='이름'
               description='이름을 입력하세요.'
+              errorMessage={verificationError}
             />
             <FormInput
               icon={UserRoundPen}
@@ -69,6 +80,7 @@ export default function FindPasswordPresenter({
               placeholder='4-12자로 입력해 주세요'
               label='아이디'
               description='아이디를 입력하세요.'
+              errorMessage={verificationError}
             />
             <div className='relative'>
               <FormInput
@@ -78,6 +90,7 @@ export default function FindPasswordPresenter({
                 placeholder='이메일을 입력해 주세요'
                 label='이메일'
                 description='이메일을 입력하세요.'
+                errorMessage={verificationError}
               />
               {isSent ? (
                 <div className='text-xs font-medium text-accent'>
@@ -88,7 +101,7 @@ export default function FindPasswordPresenter({
               )}
               <Button
                 type='button'
-                onClick={onSendCode}
+                onClick={handleSendCode}
                 className={`absolute w-24 right-3 top-11 h-8 ${
                   isSent
                     ? 'bg-white border border-primary-outline text-primary'
@@ -107,6 +120,7 @@ export default function FindPasswordPresenter({
               placeholder='이메일로 전송된 코드를 입력해 주세요'
               label='코드'
               description='코드를 입력하세요'
+              errorMessage={submitError}
             />
             <Button type='submit' disabled={!isValid} className='w-full'>
               확인

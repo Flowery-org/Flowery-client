@@ -18,6 +18,7 @@ type FormInputProps<T extends FieldValues> = {
   label?: string;
   description?: string;
   validMessage?: string;
+  errorMessage?: string | null;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'form' | 'name'>;
 
 export function FormInput<T extends FieldValues>({
@@ -25,6 +26,7 @@ export function FormInput<T extends FieldValues>({
   name,
   label,
   validMessage,
+  errorMessage,
   className,
   ...props
 }: FormInputProps<T>) {
@@ -47,10 +49,12 @@ export function FormInput<T extends FieldValues>({
             <Input icon={icon} className={className} {...field} {...props} />
           </FormControl>
           <div className='min-h-[20px]'>
-            {isFieldValid ? (
-              <FormMessage className='text-accent'>{validMessage}</FormMessage>
+            {errorMessage ? (
+              <span className='text-destructive'>{errorMessage}</span>
+            ) : isFieldValid ? (
+              <span className='text-accent'>{validMessage}</span>
             ) : (
-              <FormMessage className='text-destructive' />
+              <FormMessage />
             )}
           </div>
         </FormItem>

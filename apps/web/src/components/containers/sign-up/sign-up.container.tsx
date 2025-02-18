@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { FormProvider, useForm } from 'react-hook-form';
-import { signUpformSchema } from './schema';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { signUpformSchema } from './schema';
 import SignUpPresenter from './sign-up.presenter';
 
 export default function SignUpContainer() {
@@ -15,12 +15,12 @@ export default function SignUpContainer() {
     defaultValues: {
       username: '',
       id: '',
-      nickname:'',
+      nickname: '',
       password: '',
       confirmPassword: '',
-      email: ''
+      email: '',
     },
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const { formState, handleSubmit } = form;
