@@ -8,6 +8,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import FindPasswordPresenter from './find-password.presenter';
 export default function FindPasswordContainer() {
+  // TODO: Server 연결 시 useQuery/useForm으로 관리
   const [verificationError, setVerificationError] = useState<string | null>(
     null,
   );

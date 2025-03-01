@@ -11,7 +11,7 @@ import { Input } from '@packages/ui/components/input';
 import { LucideIcon } from 'lucide-react';
 import { InputHTMLAttributes } from 'react';
 import { FieldValues, Path, useFormContext } from 'react-hook-form';
-
+import { match, P } from 'ts-pattern';
 type FormInputProps<T extends FieldValues> = {
   icon: LucideIcon;
   name: Path<T>;
@@ -49,13 +49,19 @@ export function FormInput<T extends FieldValues>({
             <Input icon={icon} className={className} {...field} {...props} />
           </FormControl>
           <div className='min-h-[20px]'>
-            {errorMessage ? (
-              <span className='text-destructive'>{errorMessage}</span>
-            ) : isFieldValid ? (
-              <span className='text-accent'>{validMessage}</span>
-            ) : (
-              <FormMessage />
-            )}
+            {match({
+              errorMessage,
+              isFieldValid,
+            })
+              .with({ errorMessage: P.string }, ({ errorMessage }) => (
+                <span className='text-destructive'>{errorMessage}</span>
+              ))
+              .with({ errorMessage: null, isFieldValid: true }, () => (
+                <span className='text-accent'>{validMessage}</span>
+              ))
+              .otherwise(() => (
+                <FormMessage />
+              ))}
           </div>
         </FormItem>
       )}

@@ -1,12 +1,18 @@
 'use client';
 
 import { FormInput } from '@/components/common/form-input';
+import { useTimer } from '@/hooks/useTimer';
 import { Button } from '@packages/ui/components/button';
 import { Form } from '@packages/ui/components/form';
 import { Mail, UserRound, UserRoundPen } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-
+import { z } from 'zod';
+export const findPasswordScheme = z.object({
+  username: z.string(),
+  id: z.string(),
+  email: z.string(),
+  code: z.string(),
+});
 interface FindPasswordPresenterProps {
   onSubmit: () => void;
   isValid: boolean;
@@ -23,32 +29,8 @@ export default function FindPasswordPresenter({
   onSendCode,
   isCodeFromFilled,
 }: FindPasswordPresenterProps) {
-  const form = useFormContext();
-  const [isSent, setIsSent] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(120);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isSent) {
-      timer = setInterval(() => {
-        setRemainingTime((prev) => {
-          if (prev <= 1) {
-            setIsSent(false);
-            return 120;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [isSent]);
-
-  const minutes = Math.floor(remainingTime / 60);
-  const seconds = remainingTime % 60;
+  const form = useFormContext<z.infer<typeof findPasswordScheme>>();
+  const { isRunning, isExpired, formattedTime, startTimer } = useTimer(120);
 
   const emailError = form.formState.errors.email;
   const isEmailValid = isCodeFromFilled && !emailError;
@@ -56,12 +38,11 @@ export default function FindPasswordPresenter({
   const handleSendCode = async () => {
     const success = await onSendCode();
     if (success) {
-      setIsSent(true);
-      setRemainingTime(120);
+      startTimer();
     }
   };
   return (
-    <div className='flex  justify-center min-h-screen w-full'>
+    <div className='flex justify-center min-h-screen w-full'>
       <main className='flex flex-col gap-8 w-96 mt-20'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
@@ -81,7 +62,7 @@ export default function FindPasswordPresenter({
               description='아이디를 입력하세요.'
               errorMessage={verificationError}
             />
-            <div className='relative'>
+            <div className='relative h-32'>
               <FormInput
                 icon={Mail}
                 name='email'
@@ -91,26 +72,28 @@ export default function FindPasswordPresenter({
                 description='이메일을 입력하세요.'
                 errorMessage={verificationError}
               />
-              {isSent ? (
+              {isRunning && !isExpired && (
                 <div className='text-xs font-medium text-accent'>
                   코드를 보냈어요! 이메일을 확인해주세요
                 </div>
-              ) : (
-                <div></div>
               )}
+              {isExpired && (
+                <div className='text-xs font-medium text-destructive'>
+                  인증 시간이 만료되었습니다
+                </div>
+              )}
+
               <Button
                 type='button'
                 onClick={handleSendCode}
                 className={`absolute w-24 right-3 top-11 h-8 ${
-                  isSent
+                  isRunning
                     ? 'bg-white border border-primary-outline text-primary'
                     : ''
                 }`}
-                disabled={!isEmailValid || isSent}
+                disabled={!isEmailValid || isRunning}
               >
-                {isSent
-                  ? `${minutes}:${seconds.toString().padStart(2, '0')}`
-                  : '코드 전송'}
+                {isRunning ? formattedTime : isExpired ? '재전송' : '코드 전송'}
               </Button>
             </div>
             <FormInput

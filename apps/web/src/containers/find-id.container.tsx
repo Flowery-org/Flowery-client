@@ -9,6 +9,7 @@ import Modal from '../components/common/Modal';
 import FindIdPresenter from './find-id.presenter';
 
 export default function FindIdContainer() {
+  // TODO: Server 연결 시 useQuery/useForm으로 관리
   const [verificationError, setVerificationError] = useState<string | null>(
     null,
   );
@@ -17,6 +18,7 @@ export default function FindIdContainer() {
   const [foundId, setFoundId] = useState<string | null>(null);
   const [foundUsername, setFoundUsername] = useState<string | null>(null);
   const [isCodeSent, setIsCodeSent] = useState(false);
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof findIdScheme>>({
