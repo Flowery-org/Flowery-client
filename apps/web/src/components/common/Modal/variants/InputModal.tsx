@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BaseModalProps } from '../types';
+import Image from 'next/image';
 import { 
   AlertDialogDescription,
   AlertDialogFooter,
@@ -13,12 +14,29 @@ export function InputModal({
   onCancel,
   submitLabel = '확인',
   cancelLabel = '취소',
-  onClose 
+  onClose,
+  title
 }: BaseModalProps) {
   const [inputValue, setInputValue] = useState('');
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-2">
+    {title && (
+      <div className="flex items-center justify-center gap-2">
+        <Image 
+          src="/FloweryIcon.svg" 
+          alt="Flowery Icon" 
+          width={24} 
+          height={24} 
+        />
+        <span className="text-lg font-medium">{title}</span>
+      </div>
+    )}
+
+    <div className="space-y-3 mt-8">
+      <div className="text-lg font-medium">
+        제목을 입력하세요
+      </div>
       {description && (
         <AlertDialogDescription className="text-sm text-muted-foreground">
           {description}
@@ -27,9 +45,10 @@ export function InputModal({
       <textarea
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="상세 제목, 메모 등을 입력하세요"
+        placeholder="상세 계획, 메모 등을 입력할 수 있습니다."
         className="w-full h-[120px] p-3 text-sm rounded-lg border border-input bg-background text-foreground resize-none focus:outline-none focus:ring-1 focus:ring-accent"
       />
+    </div>
       <AlertDialogFooter className="flex gap-2">
         <AlertDialogCancel 
           onClick={() => {
