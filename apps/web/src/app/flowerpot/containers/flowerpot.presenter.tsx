@@ -3,19 +3,19 @@
 import { AppBar } from '@/components/common/app-bar';
 import Modal from '@/components/common/Modal';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { TodoItem, TodoFormData } from './flowerpot.container';
-import { ReactNode } from 'react';
+import { formatDate } from '@/util/formatDate';
+import { TodoItem } from '@/hooks/useTodos';
+import { TodoFormData } from './schemas/todoSchema';
+import { useFormContext } from 'react-hook-form';
 
 interface FlowerpotPresenterProps {
   isModalOpen: boolean;
   onOpenModal: () => void;
   onCloseModal: () => void;
-  onSubmit: (data: TodoFormData) => void;
+  onSubmit: () => void;
   todos: TodoItem[];
   onToggleTodo: (id: number) => void;
   onToggleStart: (id: number) => void;
-  children?: ReactNode;
 }
 
 export default function FlowerpotPresenter({
@@ -25,26 +25,18 @@ export default function FlowerpotPresenter({
   onSubmit,
   todos,
   onToggleTodo,
-  onToggleStart,
-  children
+  onToggleStart
 }: FlowerpotPresenterProps) {
-  const [currentDate, setCurrentDate] = useState('');
+  const { setValue } = useFormContext<TodoFormData>();
+  const currentDate = formatDate();
   
-  useEffect(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    
-    setCurrentDate(`${year}년 ${month}월 ${day}일`);
-  }, []);
-
-  const activeTodos = todos.filter(todo => !todo.isCompleted);
+  const notCompletedTodos = todos.filter(todo => !todo.isCompleted);
   const completedTodos = todos.filter(todo => todo.isCompleted);
 
-  const handleModalSubmit = (data: string | boolean) => {
-    if (typeof data === 'string' && data.trim()) {
-      onSubmit({ todoContent: data });
+  const handleModalSubmit = (inputValue: string | boolean) => {
+    if (typeof inputValue === 'string' && inputValue.trim()) {
+      setValue('todoContent', inputValue);
+      onSubmit();
     }
   };
 
@@ -73,14 +65,14 @@ export default function FlowerpotPresenter({
         <section>
           <h2 className="text-xl font-medium mb-4 z-10">오늘 할 일</h2>
           
-          {activeTodos.length > 0 ? (
-            activeTodos.map((todo) => (
+          {notCompletedTodos.length > 0 ? (
+            notCompletedTodos.map((todo) => (
               <div 
                 key={todo.id}
                 className={`mb-3 rounded-2xl bg-white border shadow-md ${
                   todo.isStarted 
                     ? 'border-accent border-2' 
-                    : 'border-[hsl(var(--gray-border))]'
+                    : 'border-border-gray'
                 }`}
               >
                 <div className="flex items-center justify-between px-4 py-3">
@@ -89,7 +81,7 @@ export default function FlowerpotPresenter({
                       type="checkbox" 
                       checked={false}
                       onChange={() => onToggleTodo(todo.id)}
-                      className="w-5 h-5 rounded-lg border-[hsl(var(--gray-border))] text-accent" 
+                      className="w-5 h-5 rounded-lg border-border-gray text-accent" 
                     />
                     <span className="text-black">{todo.content}</span>
                   </div>
@@ -98,7 +90,7 @@ export default function FlowerpotPresenter({
                     className={`min-w-[56px] px-4 py-1.5 rounded-xl text-sm ${
                       todo.isStarted 
                         ? 'bg-accent text-white' 
-                        : 'bg-white text-[hsl(var(--gray-button))] border border-[hsl(var(--gray-border))]'
+                        : 'bg-white text-[hsl(var(--gray-button))] border border-border-gray'
                     }`}
                   >
                     {todo.isStarted ? '정지' : '시작'}
@@ -127,12 +119,12 @@ export default function FlowerpotPresenter({
               {completedTodos.map((todo) => (
                 <div 
                   key={todo.id}
-                  className="mb-3 rounded-2xl bg-[hsl(var(--gray-medium))] border border-[hsl(var(--gray-border))] shadow-md"
+                  className="mb-3 rounded-2xl bg-[hsl(var(--gray-medium))] border border-border-gray shadow-md"
                 >
                   <div className="flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div 
-                        className="w-5 h-5 bg-[hsl(var(--gray-light))] rounded-md flex items-center justify-center border border-[hsl(var(--gray-border))] cursor-pointer"
+                        className="w-5 h-5 bg-[hsl(var(--gray-light))] rounded-md flex items-center justify-center border border-border-gray cursor-pointer"
                         onClick={() => onToggleTodo(todo.id)}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -163,7 +155,6 @@ export default function FlowerpotPresenter({
         icon={<Image src="/FloweryIcon.svg" alt="Flowery Icon" width={24} height={24} className="filter grayscale brightness-90 contrast-110" />}
         onSubmit={handleModalSubmit}
       />
-      {children}
     </div>
   );
 }

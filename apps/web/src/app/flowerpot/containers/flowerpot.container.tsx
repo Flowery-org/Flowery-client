@@ -1,84 +1,55 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import FlowerpotPresenter from './flowerpot.presenter';
-
-export interface TodoItem {
-  id: number;
-  content: string;
-  isCompleted: boolean;
-  isStarted: boolean;
-}
-
-export type TodoFormData = {
-  todoContent: string;
-};
+import { useTodos } from '@/hooks/useTodos';
+import { todoSchema, TodoFormData } from './schemas/todoSchema';
 
 export default function FlowerpotContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const { todos, isLoading, error, addTodo, toggleTodo, toggleStart } = useTodos();
   
   const methods = useForm<TodoFormData>({
+    resolver: zodResolver(todoSchema),
     defaultValues: {
       todoContent: '',
     }
   });
 
-  // localStorage에서 todos 불러오기
-  useEffect(() => {
-    const savedTodos = localStorage.getItem('flowerpot-todos');
-    if (savedTodos) {
-      try {
-        setTodos(JSON.parse(savedTodos));
-      } catch (e) {
-        console.error('로컬스토리지 데이터 파싱 오류:', e);
-      }
-    }
-  }, []);
-
-  // todos 변경 시 localStorage 저장
-  useEffect(() => {
-    if (todos.length > 0) {
-      localStorage.setItem('flowerpot-todos', JSON.stringify(todos));
-    }
-  }, [todos]);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const handleAddTodo = (data: TodoFormData) => {
-    console.log('새 할 일 추가:', data.todoContent);
-    const newTodo: TodoItem = {
-      id: Date.now(),
-      content: data.todoContent,
-      isCompleted: false,
-      isStarted: false
-    };
-    setTodos([...todos, newTodo]);
-    methods.reset();
-    setIsModalOpen(false);
+    addTodo(data.todoContent)
+      .then(() => {
+        methods.reset();
+        setIsModalOpen(false);
+      })
+      .catch(error => {
+        console.error('할 일 추가 실패:', error);
+      });
   };
 
-  const handleToggleTodo = (id: number) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-    ));
-  };
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
+  }
 
-  const handleToggleStart = (id: number) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, isStarted: !todo.isStarted } : todo
-    ));
-  };
+  if (error) {
+    return <div className="flex justify-center items-center min-h-screen">오류가 발생했습니다: {error.message}</div>;
+  }
 
   return (
     <FormProvider {...methods}>
       <FlowerpotPresenter 
         isModalOpen={isModalOpen}
-        onOpenModal={() => setIsModalOpen(true)}
-        onCloseModal={() => setIsModalOpen(false)}
-        onSubmit={handleAddTodo}
+        onOpenModal={handleOpenModal}
+        onCloseModal={handleCloseModal}
+        onSubmit={methods.handleSubmit(handleAddTodo)}
         todos={todos}
-        onToggleTodo={handleToggleTodo}
-        onToggleStart={handleToggleStart}
+        onToggleTodo={toggleTodo}
+        onToggleStart={toggleStart}
       />
     </FormProvider>
   );
